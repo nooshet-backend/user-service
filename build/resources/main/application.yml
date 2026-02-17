@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: nooshet-user-service
+
+springdoc:
+  server-url: "http://user.nooshet.local"
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgresql-user:5432/nooshet_user?sslmode=disable
+    username: nooshet_user
+    password: user_password_123
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+redis:
+  host: redis
+  port: 6379
+
+logging:
+  level:
+    root: INFO
+    org.nooshet.user: DEBUG
+    org.springframework.security: DEBUG
+

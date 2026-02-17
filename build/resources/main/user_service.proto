@@ -1,0 +1,22 @@
+syntax = "proto3";
+package nooshet.user.grpc;
+
+option java_multiple_files = true;
+option java_package = "org.nooshet.user.grpc";
+option java_outer_classname = "UserServiceProto";
+
+service UserService {
+  rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse) {}
+}
+
+message CreateProfileRequest {
+  int64 userId = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string phone = 4;
+  string userType = 5;
+}
+
+message CreateProfileResponse {
+  bool success = 1;
+}
