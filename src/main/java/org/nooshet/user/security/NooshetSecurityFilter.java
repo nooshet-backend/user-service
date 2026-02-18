@@ -4,12 +4,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,13 +21,12 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class NooshetSecurityFilter extends OncePerRequestFilter {
 
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String USER_EMAIL_HEADER = "X-User-Email";
     private static final String USER_ROLES_HEADER = "X-User-Roles";
-
-    // Pre-compiled set of paths that don't need security filter processing
+    
     private static final Set<String> SKIP_FILTER_PATH_PREFIXES = Set.of(
             "/swagger-ui",
             "/v3/api-docs",
@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
+        
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -64,13 +64,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String userIdStr = request.getHeader(USER_ID_HEADER);
 
         if (userIdStr != null && !userIdStr.isBlank() && !userIdStr.equalsIgnoreCase("null")) {
-            boolean success = authenticateGatewayUser(request);
-            if (!success) {
-                authenticateInternalService();
-            }
-        } else {
-            authenticateInternalService();
-        }
+             boolean success = authenticateGatewayUser(request);
+             if (!success) {
+                 authenticateInternalService();
+             }
+         } else {
+             authenticateInternalService();
+         }
     }
 
     private void authenticateViaJwt(String token) {
@@ -78,15 +78,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Long userId = jwtService.parseUserId(token);
             java.util.List<String> roles = jwtService.parseRoles(token);
             List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
-
+            
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     userId, null, authorities);
-
+            
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (Exception e) {
-            // Token validation failed
         }
     }
 
@@ -118,7 +118,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     userId, null, authorities);
-
+            
             auth.setDetails(email);
             SecurityContextHolder.getContext().setAuthentication(auth);
             return true;
