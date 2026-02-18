@@ -20,6 +20,18 @@ public class ChefProfile {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Embedded
+    private Address address;
+
+    @Column(name = "bank_account")
+    private String bankAccount;
+
+    @Column(name = "kitchen_picture")
+    private String kitchenPicture;
+
+    @Column(name = "terms_accepted")
+    private Boolean termsAccepted;
+
     public ChefProfile() {
     }
 
@@ -59,6 +71,38 @@ public class ChefProfile {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(String bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public String getKitchenPicture() {
+        return kitchenPicture;
+    }
+
+    public void setKitchenPicture(String kitchenPicture) {
+        this.kitchenPicture = kitchenPicture;
+    }
+
+    public Boolean getTermsAccepted() {
+        return termsAccepted;
+    }
+
+    public void setTermsAccepted(Boolean termsAccepted) {
+        this.termsAccepted = termsAccepted;
     }
 
     @Override
