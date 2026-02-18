@@ -4,11 +4,6 @@ server:
 spring:
   application:
     name: nooshet-user-service
-
-springdoc:
-  server-url: "http://user.nooshet.local"
-
-spring:
   datasource:
     url: jdbc:postgresql://postgresql-user:5432/nooshet_user?sslmode=disable
     username: nooshet_user
@@ -16,6 +11,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+springdoc:
+  server-url: "http://95.111.228.89"
 
 redis:
   host: redis
@@ -26,4 +24,3 @@ logging:
     root: INFO
     org.nooshet.user: DEBUG
     org.springframework.security: DEBUG
-
