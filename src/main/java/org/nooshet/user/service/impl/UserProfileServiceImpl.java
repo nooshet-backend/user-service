@@ -49,16 +49,11 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = new UserProfile();
         profile.setAccountId(request.getUserId());
         profile.setName(request.getFirstName() + " " + request.getLastName());
-        // Only require setup for CHEF and COURIER
-        String role = request.getRole();
-        if ("CHEF".equalsIgnoreCase(role) || "COURIER".equalsIgnoreCase(role)) {
-            profile.setSetupRequired(true);
-        } else {
-            profile.setSetupRequired(false);
-        }
+        // setupRequired removed from UserProfile, do not set it here
         // Map other fields if available in UserProfile entity
         userProfileRepository.save(profile);
 
+        String role = request.getRole();
         try {
             if ("CHEF".equalsIgnoreCase(role)) {
                 // Create ChefProfile entity if needed
