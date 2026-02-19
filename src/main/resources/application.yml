@@ -28,4 +28,4 @@ logging:
     org.springframework.security: DEBUG
 
 jwt:
-  secret: "replace_this_with_a_secure_random_secret_key"
+  secret: "change-me-in-prod-please-use-a-longer-secret-key-123456"
