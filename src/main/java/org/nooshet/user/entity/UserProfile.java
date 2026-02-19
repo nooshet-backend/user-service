@@ -27,7 +27,4 @@ public class UserProfile extends BaseEntity {
 
     private String language;
 
-    @Column(name = "setup_required", nullable = false)
-    private boolean setupRequired = true;
-
 }
