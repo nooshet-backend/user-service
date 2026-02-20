@@ -2,12 +2,18 @@ package org.nooshet.user.service.impl;
 
 import org.nooshet.user.dto.*;
 import org.nooshet.user.service.UserSetupService;
+import org.nooshet.user.service.ReverseGeocodingService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserSetupServiceImpl implements UserSetupService {
+    private final ReverseGeocodingService reverseGeocodingService;
+
     @Override
     public void createUserProfileOnRegistration(String userId, String firstName, String lastName, String email, String phone) {
         // Create user profile
@@ -55,7 +61,15 @@ public class UserSetupServiceImpl implements UserSetupService {
 
     @Override
     public void setupBuyer(String userId, BuyerSetupRequest request) {
-        // Save address, etc. for buyer
+        // If addressText not provided but lat/lon are, reverse geocode to fill it
+        if ((request.getAddressText() == null || request.getAddressText().isBlank())
+                && request.getLat() != null && request.getLon() != null) {
+            String reverse = reverseGeocodingService.reverse(request.getLat(), request.getLon());
+            request.setAddressText(reverse);
+        }
+
+        // Persist the buyer's address: this is a placeholder - integrate with repository
+        // e.g., save to BuyerProfile entity, mapping addressText and coordinates
     }
 
     @Override
