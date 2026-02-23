@@ -29,3 +29,6 @@ logging:
 
 jwt:
   secret: "change-me-in-prod-please-use-a-longer-secret-key-123456"
+
+internal:
+  token: ${INTERNAL_TOKEN:internal-token-test}
