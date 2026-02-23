@@ -2,24 +2,100 @@ package org.nooshet.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.nooshet.user.dto.CreateProfileRequest;
+import org.nooshet.user.dto.request.CreateChefProfileRequest;
+import org.nooshet.user.dto.request.CreateCourierProfileRequest;
+import org.nooshet.user.dto.request.SetupRequest;
+import org.nooshet.user.dto.response.CompleteSetupResponse;
+import org.nooshet.user.dto.response.SetupResponse;
+import org.nooshet.user.entity.ChefProfile;
+import org.nooshet.user.entity.CourierProfile;
 import org.nooshet.user.entity.UserProfile;
 import org.nooshet.user.repository.ChefProfileRepository;
+import org.nooshet.user.repository.CourierProfileRepository;
 import org.nooshet.user.repository.UserProfileRepository;
 import org.nooshet.user.service.UserProfileService;
-import org.nooshet.user.dto.request.SetupRequest;
-import org.nooshet.user.dto.response.SetupResponse;
-import org.nooshet.user.dto.response.CompleteSetupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.ChoiceFormat;
 
 @Service
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
+    private final ChefProfileRepository chefProfileRepository;
+    private final CourierProfileRepository courierProfileRepository;
 
+    @Override
+    @Transactional
+    public void createProfile(CreateProfileRequest request) {
+        if (userProfileRepository.existsByAccountId(request.getUserId())) {
+            return;
+        }
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setAccountId(request.getUserId());
+        userProfile.setName(request.getFirstName() + " " + request.getLastName());
+
+        userProfileRepository.save(userProfile);
+
+        String role = request.getRole();
+
+        if (role == null || role.isBlank()) {
+            return;
+        }
+
+        switch (role.toUpperCase()) {
+            case "CHEF" -> createChefProfile(buildChefRequest(request));
+
+            case "COURIER" -> createCourierProfile(buildCourierRequest(request));
+
+            case "BUYER" -> {}
+
+            default -> throw new IllegalArgumentException("Invalid role: " + role);
+        }
+    }
+
+    private void createChefProfile(CreateChefProfileRequest request) {
+        ChefProfile chef = new ChefProfile();
+        chef.setFirstName(request.getFirstName());
+        chef.setLastName(request.getLastName());
+        chef.setEmail(request.getEmail());
+        chef.setAddress(request.getAddress());
+        chef.setBankAccount(request.getBankAccount());
+        chef.setKitchenPicture(request.getKitchenPicture());
+        chef.setTermsAccepted(request.getTermsAccepted());
+        chefProfileRepository.save(chef);
+    }
+
+    private void createCourierProfile(CreateCourierProfileRequest request) {
+        CourierProfile courier = new CourierProfile();
+        courier.setFirstName(request.getFirstName());
+        courier.setLastName(request.getLastName());
+        courier.setPhoneNumber(request.getPhone());
+        courier.setBankAccount(request.getBankAccount());
+        courier.setVehicleType(request.getVehicleType());
+        courier.setVehiclePicture(request.getVehiclePicture());
+        courier.setTermsAccepted(request.getTermsAccepted());
+        courierProfileRepository.save(courier);
+    }
+
+    private CreateChefProfileRequest buildChefRequest(CreateProfileRequest request) {
+        CreateChefProfileRequest dto = new CreateChefProfileRequest();
+        dto.setUserId(request.getUserId());
+        dto.setFirstName(request.getFirstName());
+        dto.setLastName(request.getLastName());
+        dto.setEmail(request.getEmail());
+        return dto;
+    }
+
+    private CreateCourierProfileRequest buildCourierRequest(CreateProfileRequest request) {
+        CreateCourierProfileRequest dto = new CreateCourierProfileRequest();
+        dto.setUserId(request.getUserId());
+        dto.setFirstName(request.getFirstName());
+        dto.setLastName(request.getLastName());
+        dto.setPhone(request.getPhone());
+        return dto;
+    }
 
     @Override
     public SetupResponse getSetupStatus() {
@@ -41,31 +117,5 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public CompleteSetupResponse skipSetup() {
         return CompleteSetupResponse.builder().success(true).message("Setup skipped").build();
-    }
-
-    @Override
-    @Transactional
-    public void createProfile(CreateProfileRequest request) {
-        if (userProfileRepository.existsByAccountId(request.getUserId())) {
-            return;
-        }
-
-        UserProfile profile = new UserProfile();
-        profile.setAccountId(request.getUserId());
-        profile.setName(request.getFirstName() + " " + request.getLastName());
-        // setupRequired removed from UserProfile, do not set it here
-        // Map other fields if available in UserProfile entity
-        userProfileRepository.save(profile);
-
-        String role = request.getRole();
-        try {
-            if ("CHEF".equalsIgnoreCase(role)) {
-                // Create ChefProfile entity if needed
-            } else if ("COURIER".equalsIgnoreCase(role)) {
-                // Create CourierProfile entity if needed
-            }
-        } catch (IllegalArgumentException e) {
-            // Log warning for unknown role
-        }
     }
 }
