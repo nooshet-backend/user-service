@@ -26,5 +26,4 @@ public class UserProfile extends BaseEntity {
     private String avatarUrl;
 
     private String language;
-
 }

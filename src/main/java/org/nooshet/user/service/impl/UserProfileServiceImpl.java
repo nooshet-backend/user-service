@@ -3,6 +3,7 @@ package org.nooshet.user.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.nooshet.user.dto.CreateProfileRequest;
 import org.nooshet.user.entity.UserProfile;
+import org.nooshet.user.repository.ChefProfileRepository;
 import org.nooshet.user.repository.UserProfileRepository;
 import org.nooshet.user.service.UserProfileService;
 import org.nooshet.user.dto.request.SetupRequest;
@@ -11,11 +12,14 @@ import org.nooshet.user.dto.response.CompleteSetupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ChoiceFormat;
+
 @Service
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
+
 
     @Override
     public SetupResponse getSetupStatus() {
