@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface CourierProfileRepository extends JpaRepository<CourierProfile, Long> {
 
     boolean existsByPhoneNumber(String phoneNumber);
+    void deleteByAccountId(Long accountId);
 }

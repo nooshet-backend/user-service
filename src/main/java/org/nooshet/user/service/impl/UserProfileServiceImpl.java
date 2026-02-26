@@ -57,6 +57,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private void createChefProfile(CreateChefProfileRequest request) {
         ChefProfile chef = new ChefProfile();
+        chef.setAccountId(request.getUserId());
         chef.setFirstName(request.getFirstName());
         chef.setLastName(request.getLastName());
         chef.setEmail(request.getEmail());
@@ -69,6 +70,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private void createCourierProfile(CreateCourierProfileRequest request) {
         CourierProfile courier = new CourierProfile();
+        courier.setAccountId(request.getUserId());
         courier.setFirstName(request.getFirstName());
         courier.setLastName(request.getLastName());
         courier.setPhoneNumber(request.getPhone());
@@ -117,5 +119,22 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public CompleteSetupResponse skipSetup() {
         return CompleteSetupResponse.builder().success(true).message("Setup skipped").build();
+    }
+
+    @Override
+    @Transactional
+    public void deleteProfile(Long accountId) {
+        // Delete profiles from all tables if they exist
+        UserProfile userProfile = userProfileRepository.findByAccountId(accountId)
+                .orElse(null);
+        
+        if (userProfile != null) {
+            // Check for associated chef profile
+            chefProfileRepository.deleteByAccountId(accountId);
+            // Check for associated courier profile
+            courierProfileRepository.deleteByAccountId(accountId);
+            
+            userProfileRepository.delete(userProfile);
+        }
     }
 }

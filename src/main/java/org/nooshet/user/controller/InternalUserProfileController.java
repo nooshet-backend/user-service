@@ -31,4 +31,15 @@ public class InternalUserProfileController {
         userProfileService.createProfile(request);
         return ResponseEntity.ok(ApiResponse.success("Profile created successfully"));
     }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponse<String>> deleteProfile(@PathVariable Long userId,
+                                                             @RequestHeader("X-Internal-Token") String token) {
+        if (!internalToken.equals(token)) {
+            return ResponseEntity.status(403).body(ApiResponse.error("Unauthorized"));
+        }
+
+        userProfileService.deleteProfile(userId);
+        return ResponseEntity.ok(ApiResponse.success("Profile deleted successfully"));
+    }
 }

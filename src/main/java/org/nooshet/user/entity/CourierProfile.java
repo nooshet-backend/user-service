@@ -24,6 +24,9 @@ public class CourierProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "account_id", unique = true, nullable = false)
+    private Long accountId;
+
     @Column(nullable = false)
     private String firstName;
 

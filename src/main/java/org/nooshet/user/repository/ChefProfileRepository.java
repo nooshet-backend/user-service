@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface ChefProfileRepository extends JpaRepository<ChefProfile, Long> {
 
     boolean existsByEmail(String email);
+    void deleteByAccountId(Long accountId);
 }

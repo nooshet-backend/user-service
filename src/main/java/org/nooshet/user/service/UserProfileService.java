@@ -11,4 +11,5 @@ public interface UserProfileService {
     CompleteSetupResponse completeSetup();
     CompleteSetupResponse skipSetup();
     void createProfile(CreateProfileRequest request);
+    void deleteProfile(Long accountId);
 }
