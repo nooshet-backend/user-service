@@ -13,7 +13,7 @@ spring:
       ddl-auto: update
 
 springdoc:
-  server-url: "http://95.111.228.89"
+  server-url: "http://158.220.127.32"
 
   data:
     redis:
