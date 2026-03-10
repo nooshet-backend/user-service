@@ -1,5 +1,6 @@
 server:
   port: 8080
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -13,7 +14,8 @@ spring:
       ddl-auto: update
 
 springdoc:
-  server-url: "http://158.220.127.32"
+  server-url: ${SPRINGDOC_SERVER_URL:/}
+
 
   data:
     redis:
